@@ -1,1 +1,35 @@
-[]
+[
+  {
+    "id": 1,
+    "title": "Remera",
+    "description": "Talle S",
+    "code": "12345",
+    "price": 15,
+    "status": true,
+    "stock": 5,
+    "category": "ropa",
+    "thumbnails": []
+  },
+  {
+    "id": 2,
+    "title": "Pantalon",
+    "description": "Talle L",
+    "code": "12345678",
+    "price": 20,
+    "status": true,
+    "stock": 7,
+    "category": "ropa",
+    "thumbnails": []
+  },
+  {
+    "id": 3,
+    "title": "Chaleco",
+    "description": "Talle M",
+    "code": "123",
+    "price": 10,
+    "status": true,
+    "stock": 3,
+    "category": "ropa",
+    "thumbnails": []
+  }
+]
