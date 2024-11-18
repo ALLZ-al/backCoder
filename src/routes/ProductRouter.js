@@ -1,64 +1,84 @@
 import express from "express";
-import ProductManager from "../managers/ProductManager.js";
-const router = express.Router();
+import Product from "../dao/models/ProductModel.js";
 
-const manager = new ProductManager("./src/data/products.json");
+const router = express.Router();
 
 router.get("/", async (req, res) => {
   try {
-    const products = await manager.getProducts();
+    const products = await Product.find();
     res.json(products);
   } catch (error) {
-    res.status(500).json({ error: "Error al obtener los productos" });
+    res.status(500).json({ message: error.message });
   }
 });
 
 router.get("/:pid", async (req, res) => {
-  const productId = parseInt(req.params.pid);
   try {
-    const product = await manager.getProductById(productId);
+    const product = await Product.findById(req.params.pid);
     if (!product) {
-      return res.status(404).send("Producto no encontrado");
+      return res.status(404).json({ message: "Producto no encontrado" });
     }
     res.json(product);
   } catch (error) {
-    res.status(500).json({ error: "Error al obtener el producto" });
+    res.status(500).json({ message: error.message });
   }
 });
 
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
+  const { title, description, price, code, stock, status, category, thumbnail } = req.body;
+
+  const requiredFields = ['title', 'code', 'price', 'description', 'stock'];
+
+  for (let field of requiredFields) {
+    if (!req.body[field]) {
+      return res.status(400).json({ error: `Producto incompleto, falta el campo: ${field}` });
+    }
+  }
+
   try {
-    const newProduct = manager.addProduct(req.body);
+    const newProduct = await Product.create({
+      title,
+      description,
+      price,
+      code,
+      stock,
+      status,
+      category,
+      thumbnail
+    });
+
     res.status(201).json(newProduct);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 
+
 router.put("/:pid", async (req, res) => {
-  const productId = parseInt(req.params.pid);
-  const updatedProduct = req.body;
   try {
-    const result = await manager.updateProduct(productId, updatedProduct);
-    if (result === "Producto no encontrado") {
-      return res.status(404).send(result);
+    const updatedProduct = await Product.findByIdAndUpdate(
+      req.params.pid,
+      req.body,
+      { new: true }
+    );
+    if (!updatedProduct) {
+      return res.status(404).json({ message: "Producto no encontrado" });
     }
-    res.json(result);
+    res.json(updatedProduct);
   } catch (error) {
-    res.status(500).json({ error: "Error al actualizar el producto" });
+    res.status(400).json({ message: error.message });
   }
 });
 
 router.delete("/:pid", async (req, res) => {
-  const productId = parseInt(req.params.pid);
   try {
-    const result = await manager.deleteProduct(productId);
-    if (result === "Producto no encontrado") {
-      return res.status(404).send(result);
+    const deletedProduct = await Product.findByIdAndDelete(req.params.pid);
+    if (!deletedProduct) {
+      return res.status(404).json({ message: "Producto no encontrado" });
     }
-    res.send(result);
+    res.json({ message: "Producto eliminado" });
   } catch (error) {
-    res.status(500).json({ error: "Error al eliminar el producto" });
+    res.status(500).json({ message: error.message });
   }
 });
 

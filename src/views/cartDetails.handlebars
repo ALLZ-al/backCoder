@@ -1,0 +1,39 @@
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detalles del Carrito</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <section class="">
+      <h1>Carrito ID: {{cart._id}}</h1>
+
+      {{#if cart}}
+        <ul>
+          {{#each cart.products}}
+            <li>
+              <h3>{{this.productId.title}}</h3>
+              <p>Precio: ${{this.productId.price}}</p>
+              <p>Cantidad: {{this.quantity}}</p>
+            </li>
+          {{/each}}
+        </ul>
+        <h1>Detalles del carrito</h1>
+
+        <ul>
+          {{#each cart.items}}
+            <li>{{name}} - ${{price}} x {{quantity}}</li>
+          {{/each}}
+        </ul>
+
+        <h2>Total: ${{calculateTotal cart.items}}</h2>
+
+      {{else}}
+        <p>No hay productos en este carrito.</p>
+      {{/if}}
+
+      <button><a href="/carts">Volver a todos los carritos</a> </button>
+    </section>
+  </body>
+</html>

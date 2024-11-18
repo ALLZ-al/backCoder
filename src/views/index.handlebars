@@ -1,8 +1,53 @@
-<h1>Lista de Productos</h1>
-<ul>
-  {{#each products}}
-    <li>{{this.title}} - ${{this.price}}</li>
-  {{else}}
-    <li>No hay productos disponibles.</li>
-  {{/each}}
-</ul>
+
+<section class="section1">
+<form action="/products" method="get">
+    <input type="text" name="title" value="{{query.title}}" placeholder="Buscar por nombre" />
+    <button type="submit">Buscar por Nombre</button>
+</form>
+
+<form action="/products" method="get">
+    <input type="text" name="category" value="{{query.category}}" placeholder="Buscar por categoría" />
+    <button type="submit">Buscar por Categoría</button>
+</form>
+
+<form action="/products" method="get">
+    <select name="sort">
+        <option value="asc" {{#if (eq sort "asc")}}selected{{/if}}>Precio Ascendente</option>
+        <option value="desc" {{#if (eq sort "desc")}}selected{{/if}}>Precio Descendente</option>
+    </select>
+    <button type="submit">Ordenar</button>
+</form>
+</section>
+
+<div class="section2">
+    <ul>
+        {{#each products}}
+        <div class="product">
+            <h2>{{this.title}}</h2>
+            <p>{{this.description}}</p>
+            <p>${{this.price}}</p>
+            <button>
+            <a href="/product/{{this._id}}">Ir a detalle</a>
+        </button>
+        </div>
+        {{/each}}
+    </ul>
+</div>
+
+<div class="section3">
+<a href="/products/?page=1">Pág.1</a>
+
+{{#if hasPrevPage}}
+    <a href="/products/?page={{prevPage}}">Prev.Pág.</a>
+{{else}}
+    <a href="/products/?page={{prevPage}}" class="disabled">Prev.Pág.</a>
+{{/if}}
+
+{{#if hasNextPage}}
+    <a href="/products/?page={{nextPage}}">Next.Pág.</a>
+{{else}}
+    <a href="/products/?page={{nextPage}}" class="disabled">Next.Pág.</a>
+{{/if}}
+
+<a href="/products/?page={{totalPages}}">Ult.Pág.</a>
+</div>

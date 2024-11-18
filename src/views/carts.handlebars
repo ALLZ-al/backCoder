@@ -1,0 +1,26 @@
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Carritos</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+
+    <button class="botonCarritos"> <a href="/products">Volver a productos</a> </button>
+    <h1>Todos los Carritos</h1>
+
+    {{#if carts}}
+      <ul>
+        {{#each carts}}
+          <li>
+            <h3>Carrito ID: {{this._id}}</h3>
+            <button class="botonCarritos"><a href="/cart/{{this._id}}">Ver detalles del carrito</a> </button>
+          </li>
+        {{/each}}
+      </ul>
+    {{else}}
+      <p>No hay carritos disponibles.</p>
+    {{/if}}
+  </body>
+</html>
