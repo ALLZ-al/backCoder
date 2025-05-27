@@ -3,6 +3,7 @@ import { ProductMongoManager } from "../dao/ProductMongoManager.js";
 import { CartMongoManager } from "../dao/CartMongoManager.js";
 import productsModel from "../dao/models/ProductModel.js";
 import cartModel from "../dao/models/CartModel.js";
+import cookieParser from "cookie-parser";
 
 const router = express.Router();
 
@@ -128,6 +129,30 @@ router.get("/product/:pid", async (req, res) => {
     console.error("Error al obtener el producto:", error);
     res.status(500).send("Error interno del servidor");
   }
+});
+
+router.use(
+  cookieParser("$2a$12$qrJ.BrCVy6C0pL3FQsUfPOWgG5mIc9GXfeQ/gTXA60RRtNkRNvusK")
+);
+
+router.get("/", (req, res) => {
+  res.render("index", {});
+});
+
+function auth(req, res, next) {
+  if (req.session && req.session.user && req.session.user.role === "admin") {
+    return next();
+  } else {
+    return res
+      .status(403)
+      .send("Acceso denegado. Se requiere rol de administrador.");
+  }
+}
+
+router.get("/private", auth, (req, res) => {
+  res.send(
+    "Si estas viendo esto es porque pasaste la autorización a este recurso"
+  );
 });
 
 export { router };

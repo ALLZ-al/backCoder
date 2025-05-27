@@ -32,7 +32,7 @@ body {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   }
   
-  button {
+  button{
     display: block;
     width: 200px;
     margin: 20px auto;
@@ -91,7 +91,7 @@ body {
   }
   
   
-.section1, .section2, .section3{
+.section1, .section2, .section3, #loginForm{
     display: flex;
     align-items: center;
     margin: 30px;
@@ -107,12 +107,20 @@ body {
         padding: 0; 
     }
     
-    .section2 .product {
+    .section2 .product , input  {
         flex: 1 1 22%; 
         box-sizing: border-box; 
         border: 1px solid #ccc;
         padding: 10px; 
         text-align: center; 
+    }
+
+    #registerForm {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: .3125rem;
     }
     
     .section2 p{

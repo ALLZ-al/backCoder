@@ -10,15 +10,38 @@ import { engine } from "express-handlebars";
 import Handlebars from "handlebars";
 import cartModel from "./dao/models/CartModel.js";
 import productsModel from "./dao/models/ProductModel.js";
+import session from "express-session";
+import MongoStore from "connect-mongo";
+import passport from "passport";
+import initializePassport from "./config/passportConfig.js";
+import UserViewHB from "./routes/UserViewHB.js";
+import SessionsRouter from "./routes/SessionsRouter.js";
+import cookieParser from "cookie-parser";
 
 const app = express();
-const port = 8080;
+const port = 9090;
 
 app.use(express.json());
-
-app.use("/api/products", productRouter);
-app.use("/carts", cartRouter);
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static(join(__dirname, "public")));
+app.use(cookieParser());
+
+const MONGO_URL =
+  "mongodb+srv://Allz:backCoder2024@backcoder.clgja.mongodb.net/ecommerce?retryWrites=true&w=majority&appName=backCoder";
+app.use(
+  session({
+    store: MongoStore.create({
+      mongoUrl: MONGO_URL,
+      ttl: 10,
+    }),
+    secret: "$2a$12$DAH5Td5N.Twm8fSN4Q2w9u2pJACo7qAPkOw/qAx7llioUnqH4Jhzi",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
+initializePassport();
+app.use(passport.initialize());
 
 const hbs = engine({
   runtimeOptions: {
@@ -44,8 +67,6 @@ app.engine("handlebars", hbs);
 app.set("view engine", "handlebars");
 let rutaViews = join(__dirname, "views");
 app.set("views", rutaViews);
-
-app.use("/", ViewsRouter);
 
 const server = app.listen(port, () => {
   console.log(`Servidor escuchando en http://localhost:${port}`);
@@ -120,18 +141,19 @@ io.on("connection", (socket) => {
   });
 });
 
-const conectarDB = async () => {
+app.use("/api/sessions", SessionsRouter);
+app.use("/api/products", productRouter);
+app.use("/carts", cartRouter);
+app.use("/users", UserViewHB);
+app.use("/", ViewsRouter);
+
+const connectMongoDB = async () => {
   try {
-    await mongoose.connect(
-      "mongodb+srv://Allz:backCoder2024@backcoder.clgja.mongodb.net/?retryWrites=true&w=majority&appName=backCoder",
-      {
-        dbName: "ecommerce",
-      }
-    );
-    console.log("DB Online...!!!");
+    await mongoose.connect(MONGO_URL);
+    console.log("Conectado a MongoDB");
   } catch (error) {
-    console.log(`Error: ${error.message}`);
+    console.log("Fallo la conexion a MongoDB");
+    process.exit();
   }
 };
-
-conectarDB();
+connectMongoDB();
